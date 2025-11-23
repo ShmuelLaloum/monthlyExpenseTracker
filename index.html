@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ניהול הוצאות</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="container">
+        <h1>הוספת הוצאה</h1>
+
+        <input type="text" id="expend" maxlength="40" placeholder="תיאור הוצאה">
+        <input type="number" id="amount" placeholder="הזן סכום">
+        <input list="myOptions" name="option" maxlength="20" id="category" placeholder="בחר אופציה">
+        <input type="date" id="date">
+
+        <datalist id="myOptions">
+        <option value="אוכל">
+        <option value="נסיעות">
+        <option value="בילויים">
+        <option value="חשבונות">
+        <option value="אחר">
+        </datalist>
+
+        <button type="button" id="addBtn">הוסף</button>
+
+    </div>
+
+    <button type="button" id="deleteAllBtn">מחק הכל</button> 
+    
+    <div id="summary"></div>
+
+    <div id="cards"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
