@@ -106,7 +106,7 @@ input, button {
 }
 #deleteAllBtn{
     position: fixed;
-    bottom: 290px;  /* קצת מעל הסיכום */
+    bottom: 280px;  
     right: 20px;
 
     padding: 10px 15px;

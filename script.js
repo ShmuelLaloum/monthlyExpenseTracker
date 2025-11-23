@@ -44,42 +44,69 @@ inputAmount.addEventListener("input", () => {
     }
 });
 
-function renderCards(filter = "all") { 
+function createCard(cardData, index, filter) {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = "תיאור הוצאה: " + cardData.expend;
+
+    const amount = document.createElement("h3");
+    amount.textContent = "סכום הוצאה: " + cardData.amount;
+
+    const category = document.createElement("h3");
+    category.textContent = "קטגוריה: " + cardData.category;
+
+    const date = document.createElement("h3");
+    date.textContent = "תאריך: " + cardData.date;
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "deleteBtn";
+    delBtn.textContent = "מחק";
+
+    delBtn.addEventListener("click", () => {
+        cardList.splice(index, 1);
+        localStorage.setItem("cards", JSON.stringify(cardList));
+        renderCards(filter);
+    });
+
+    card.appendChild(title);
+    card.appendChild(amount);
+    card.appendChild(category);
+    card.appendChild(date);
+    card.appendChild(delBtn);
+
+    return card;
+}
+
+
+function renderCards(filter = "all") {
     cards.innerHTML = "";
+
     cardList.forEach((cardData, index) => {
         if (filter !== "all" && cardData.category !== filter) return;
 
-        const card = document.createElement("div");
-        card.className = "card";
-
-        card.innerHTML = `
-            <h3>תיאור הוצאה: ${cardData.expend}</h3>
-            <h3>סכום הוצאה: ${cardData.amount}</h3>
-            <h3>קטגוריה: ${cardData.category}</h3>
-            <h3>תאריך: ${cardData.date}</h3>
-            <button class="deleteBtn">מחק</button>
-        `;
-
-        card.querySelector(".deleteBtn").addEventListener("click", () => {
-            cardList.splice(index, 1);
-            localStorage.setItem("cards", JSON.stringify(cardList));
-            renderCards(currentFilter);   
-        });
-
+        const card = createCard(cardData, index, filter);
         cards.appendChild(card);
     });
+
     updateSummary();
 }
 
+
 function updateSummary() {
     const summaryDiv = document.getElementById("summary");
-    summaryDiv.innerHTML = "<h2>סיכום חודשי:</h2>";
 
-    const summary = {}; // סכומים לכל חודש-שנה
+    summaryDiv.innerHTML = "";
 
+    const title = document.createElement("h2");
+    title.textContent = "סיכום חודשי:";
+    summaryDiv.appendChild(title);
+
+    const summary = {};
     cardList.forEach(card => {
         const { month, year } = extractMonthYear(card.date);
-        const key = `${month}-${year}`;  // לדוגמה: "11-2025"
+        const key = `${month}-${year}`;
 
         if (!summary[key]) summary[key] = 0;
         summary[key] += Number(card.amount);
@@ -87,28 +114,25 @@ function updateSummary() {
 
     for (const key in summary) {
         const [month, year] = key.split("-");
-        summaryDiv.innerHTML += `
-            <p>חודש ${month}/${year} — ${summary[key]} ₪</p>
-        `;
+
+        const line = document.createElement("p");
+        line.textContent = `חודש ${month}/${year} — ${summary[key]} ₪`;
+
+        summaryDiv.appendChild(line);
     }
 }
 
 
 function extractMonthYear(dateString) {
-    // אם זה תאריך פורמט HTML: YYYY-MM-DD
     if (dateString.includes("-")) {
         const [year, month, day] = dateString.split("-");
         return { month, year };
     }
 
-    // אם זה פורמט מקומי כמו 23.11.2025
     if (dateString.includes(".")) {
         const [day, month, year] = dateString.split(".");
         return { month, year };
     }
-
-    // פורמט לא מזוהה – לא יקרה, אבל ליתר ביטחון
-    return { month: "??", year: "??" };
 }
 
 
