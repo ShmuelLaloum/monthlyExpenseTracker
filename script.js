@@ -47,6 +47,7 @@ inputAmount.addEventListener("input", () => {
 function createCard(cardData, index, filter) {
     const card = document.createElement("div");
     card.className = "card";
+    card.dataset.id = cardData.id;
 
     const title = document.createElement("h3");
     title.textContent = "תיאור הוצאה: " + cardData.expend;
@@ -65,16 +66,15 @@ function createCard(cardData, index, filter) {
     delBtn.textContent = "מחק";
 
     delBtn.addEventListener("click", () => {
-        cardList.splice(index, 1);
+        cardList = cardList.filter(card => card.id !== cardData.id);
         localStorage.setItem("cards", JSON.stringify(cardList));
         renderCards(filter);
     });
 
-    card.appendChild(title);
-    card.appendChild(amount);
-    card.appendChild(category);
-    card.appendChild(date);
-    card.appendChild(delBtn);
+    const container = [title,amount,category,date,delBtn];
+    container.forEach(element => {
+        card.appendChild(element);
+    });
 
     return card;
 }
@@ -153,11 +153,13 @@ addBtn.addEventListener("click" , () => {
     }
 
     const newCard = {
-        expend: expendValue,
-        amount: amountValue,
-        category: categoryValue,
-        date: dateValue
-    };
+    id: crypto.randomUUID(),
+    expend: expendValue,
+    amount: amountValue,
+    category: categoryValue,
+    date: dateValue
+};
+
 
     cardList.push(newCard);
     localStorage.setItem("cards", JSON.stringify(cardList));
